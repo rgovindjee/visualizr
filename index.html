@@ -176,7 +176,7 @@
 					XXsum += data[i][0]*data[i][0];
 				}
 
-				b=(XYsum-length*Xsum*Ysum)/(XXsum-length*Xsum*Xsum);
+				b=(XYsum*length-Xsum*Ysum)/(XXsum*length - Xsum*Xsum);
 				a=(Ysum-b*Xsum)/length;
 				
 				// Create a 1D array/list of the x coordinates
