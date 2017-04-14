@@ -54,17 +54,15 @@
 					// Update data after change
 					afterChange: function (changes, source) {
 							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
-							//console.log(changes);
-							// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
-							d[changes[0][0]][changes[0][1]] = changes[0][3];
-							$("#hot").data("values", $("#hot").handsontable('getData'));
-							//console.log(d);
+								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
+								d[changes[0][0]][changes[0][1]] = changes[0][3];
+								$("#hot").data("values", $("#hot").handsontable('getData'));
 							}
 					}
 				});
 
 				var hotData = $("#hot").handsontable('getData');
-				console.log(hotData);
+				
 				// Bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
 				$("#hot").data("values", hotData);
 				
@@ -118,13 +116,13 @@
 						// Array of two points at either end of the line
 						var bestFitCoords = getBestFit(data);
 						
-						if (bestFit) {bestFit.remove();} // Clear any best fit lines in existence
-						
+						if (bestFit) {console.log(bestFit.remove());} // Clear any best fit lines in existence
+						console.log("Before: " + bestFit);
 						var bestFit = new Path();
 						bestFit.moveTo(bestFitCoords[0]);
 						bestFit.strokeColor = 'green';
 						bestFit.add(bestFitCoords[1]);
-						
+						console.log("After: " + bestFit);
 						// Add label with regression info (doesn't work with jQuery?)
 						$("#regression").textContent = 'new text';
 					}
