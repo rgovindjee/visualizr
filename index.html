@@ -89,7 +89,10 @@
 				view.onFrame = function(event) {
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
 					var data = $("#hot").data("values");
-					
+					// Flip y values so the points display properly on the js canvas
+					for (var i = 0; i < data.length; i++) {
+						data[i][1] = 600 - data[i][1];
+					}
 					// Execute when spreadsheet data is available
 					if (data) {
 						// Drawing parameters (may be fetched from user input later)
