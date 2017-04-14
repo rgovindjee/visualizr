@@ -21,8 +21,7 @@
 		<script type="text/javascript">
 			$(document).ready(function () {
 
-				function getData() {
-					return [
+				var d = [
 					  [100, 200],
 					  [200, 250],
 					  [250, 300],
@@ -34,14 +33,14 @@
 					  ['', ''],
 					  ['', ''],
 					];
-				}
+				
 			  
 				// Instead of creating a new Handsontable instance with the container element passed as an argument,
 				// you can simply call .handsontable method on a jQuery DOM object.
 				var $container = $("#hot");
 
 				$container.handsontable({
-					data: getData(),
+					data: d,
 					startRows: 10,
 					startCols: 2,
 					minRows: 1,
@@ -51,9 +50,17 @@
 					rowHeaders: true,
 					colHeaders: true,
 					minSpareRows: 1,
-					contextMenu: true
+					contextMenu: true,
+					//update data after change
+					afterChange: function (changes, source) {
+							if (changes) {
+							console.log(changes);
+							d[changes[0][0]][changes[0][1]] = changes[0][3];
+							$("#hot").data("values", d);
+							}
+					}
 				});
-				
+
 				var hotData = $("#hot").handsontable('getData');
 				console.log(hotData);
 				//bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
@@ -88,6 +95,7 @@
 			
 			// Execute when the DOM is ready
 			window.onload = function() {
+
 				// Get a reference to the canvas object
 				var canvas = document.getElementById('myCanvas');
 				// Create an empty project and a view for the canvas:
@@ -95,76 +103,95 @@
 				
 				// Draw 60 times every second
 				view.onFrame = function(event) {
-					// Clear path if it exists so we don't have memory problems (maybe this isn't necessary)
-					if (path) {path.remove();}
-					
-					// Create a new Paper.js path object and starting point
-					var path = new Path();
-					var point = new Point(100,200);
-					
-					// Give line a random color
-					switch(Math.floor(Math.random() * 3)) {
-						case 0:
-							path.strokeColor = 'black';
-							break;
-						case 1:
-							path.strokeColor = 'red';
-							break;
-						case 2:
-							path.strokeColor = 'blue';
-							break;
-						default:
-							console.log("Color picking error");
-					}
-					
-					// Start line from initial value of point
-					path.moveTo(point);
-					// Import data from the spreadsheet
+					// Pull spreadsheet data from the element that the spreadsheet is associated with
 					var data = $("#hot").data("values");
-					var i;
-					// Display the points at using values from the spreadsheet
-					for (i=0; i < 4; i++) {
-						if (data) {
-							point.x = data[i][0];
-							point.y = data[i][1];
-							
-							//console.log(point);
-							
-							path.add(point);
+					// Execute when spreadsheet data is available
+					if (data) {
+						// Clear path if it exists so we don't have memory problems (maybe this isn't necessary)
+						if (path) {path.remove();}
+						
+						// Create a new Paper.js path object and starting point
+						var path = new Path();
+						var point = new Point(100,200);
+						
+						// Give line a random color
+						switch(Math.floor(Math.random() * 3)) {
+							case 0:
+								path.strokeColor = 'black';
+								break;
+							case 1:
+								path.strokeColor = 'red';
+								break;
+							case 2:
+								path.strokeColor = 'blue';
+								break;
+							default:
+								console.log("Color picking error");
 						}
-					}
-					path.smooth();
-
-					// Calculate best fit line with least sqaures regression
-					var Xsum =0;
-					var Ysum = 0;
-					var XYsum= 0;
-					var XXsum= 0;
-					var b=0;
-					var a=0;
-					var length = 4; //hack,should be the length of the data array
-					//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
-					if(data) { 
-						for (i=0;i<length;i++){
-							Xsum += data[i][0];
-							Ysum += data[i][1];
-							XYsum += data[i][0]*data[i][1];
-							XXsum += data[i][0]*data[i][0];
+						
+						// Start line from initial value of point
+						path.moveTo(point);
+						// Import data from the spreadsheet
+						data = $("#hot").data("values");
+						//console.log(data);
+						// Check to see how long the valid list of data is
+						var max = getMaxIndex(data);
+						//console.log("max index: "+max);
+						// Display the points at using values from the spreadsheet
+						for (var i=0; i < max; i++) {
+							if (data) {
+								point.x = data[i][0];
+								point.y = data[i][1];
+								
+								//console.log(point);
+								
+								path.add(point);
+							}
 						}
+						path.smooth();
 
-						b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
-						a=(Ysum-b*Xsum)/length;
-						var linearX = new Point(0,a);
-						var linearY = new Point(500,a+500*b);
-						var bestFit = new Path();
-						bestFit.moveTo(linearX);
-						bestFit.strokeColor = 'green';
-						$("#regression").textContent = 'new text';
-						bestFit.add(linearY);
+						// Calculate best fit line with least sqaures regression
+						var Xsum =0;
+						var Ysum = 0;
+						var XYsum= 0;
+						var XXsum= 0;
+						var b=0;
+						var a=0;
+						var length = 4; //hack,should be the length of the data array
+						//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
+						
+							for (i=0;i<length;i++){
+								Xsum += data[i][0];
+								Ysum += data[i][1];
+								XYsum += data[i][0]*data[i][1];
+								XXsum += data[i][0]*data[i][0];
+							}
+
+							b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
+							a=(Ysum-b*Xsum)/length;
+							var linearX = new Point(0,a);
+							var linearY = new Point(500,a+500*b);
+							var bestFit = new Path();
+							bestFit.moveTo(linearX);
+							bestFit.strokeColor = 'green';
+							$("#regression").textContent = 'new text';
+							bestFit.add(linearY);
 					}
 				}
 			}
 			
+			// Iterate over an array and get the last index with [0] and [1] elements
+			// Takes an array composed of n arrays with 2 elements each
+			function getMaxIndex(data){
+				
+				// Magic number 21 is the maximum number of rows in the table, set arbitrarily; passing the data by binding it to the element might be better
+				for (var j=0; j < 21; j++) {
+					// Check if either cell is empty; if yes, return the last full row + 1 (the for loop that will use this needs the max index + 1)
+					if (data[j][0] === "" || data[j][1] === "" ) {
+						return j;
+					}
+				}
+			}
 		</script>
 
 	</head>
