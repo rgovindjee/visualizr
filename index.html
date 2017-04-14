@@ -57,8 +57,8 @@
 							console.log(changes);
 							// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 							d[changes[0][0]][changes[0][1]] = changes[0][3];
-							$("#hot").data("values", d);
-							console.log("Data: " + d);
+							$("#hot").data("values", $("#hot").handsontable('getData'));
+							console.log(d);
 							}
 					}
 				});
@@ -71,6 +71,7 @@
 				// You can access Handsontable api methods by passing their names as an argument, e.g.:
 				var hotInstance = $("#hot").handsontable('getInstance');
 			  
+				/*
 				function bindDumpButton() {
 			  
 					Handsontable.Dom.addEvent(document.body, 'click', function (e) {
@@ -86,7 +87,7 @@
 					});
 				}
 				
-				bindDumpButton();
+				bindDumpButton();*/
 			});
 		</script>
 		
