@@ -193,15 +193,15 @@
 				// Find min and max X coordinates
 				var minX = findMinElement(xCoords);
 				var maxX = findMaxElement(xCoords);
-				
+				console.log(minX + " , " + maxX);
 				// Define two points at the extremes of the domain of the data that are on the best fit line
-				var linearX = new Point(minX,a+minX*b);
-				var linearY = new Point(maxX,a+maxX*b);
+				var linearMin = new Point(minX,a+minX*b);
+				var linearMax = new Point(maxX,a+maxX*b);
 				
-				return [linearX,linearY];
+				return [linearMin,linearMax];
 			}
 			
-			//Takes a 1D array and returns the largest element (must be a number)
+			// Takes a 1D array and returns the largest element (must be a number)
 			function findMaxElement(data) {
 				var maxElement = 0;
 				for (i in data) {
