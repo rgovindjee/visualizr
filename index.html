@@ -56,6 +56,11 @@
 							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
 								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 								d[changes[0][0]][changes[0][1]] = changes[0][3];
+								// Fix y values so point displays properly on canvas
+								if (changes[0][1] === 1) {
+									d[changes[0][0]][changes[0][1]] = 600 - d[changes[0][0]][changes[0][1]];
+								}
+								// Save change to data array to object for global access
 								$("#hot").data("values", $("#hot").handsontable('getData'));
 							}
 					}
@@ -98,18 +103,14 @@
 						
 						// Check to see how long the valid list of data is (needs a coordinate PAIR!)
 						var max = getMaxIndex(data);
-
-						// Flip y values so the points display properly on the js canvas
-						for (var i = 0; i < max; i++) {
-							data[i][1] = 600 - data[i][1];
-						}
 						
+						console.log(data);
 						// Declare array of points, one for each valid data entry, and initialize with values from the data array
 						var points = new Array();
 						for (var i=0; i < max; i++) {
 							points.push(new Point(data[i]));
 						}
-						//console.log(points);
+						console.log(points);
 						var circles = new Array();
 						
 						// Display the points from the array
