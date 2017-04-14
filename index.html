@@ -45,16 +45,17 @@
 					startCols: 2,
 					minRows: 1,
 					minCols: 2,
-					maxRows: 21,
+					maxRows: 10,
 					maxCols: 2,
 					rowHeaders: true,
 					colHeaders: true,
 					minSpareRows: 1,
 					contextMenu: true,
-					//update data after change
+					// Update data after change
 					afterChange: function (changes, source) {
-							if (changes) {
-							console.log(changes);
+							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
+							//console.log(changes);
+							// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 							d[changes[0][0]][changes[0][1]] = changes[0][3];
 							$("#hot").data("values", d);
 							}
@@ -63,7 +64,7 @@
 
 				var hotData = $("#hot").handsontable('getData');
 				console.log(hotData);
-				//bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
+				// Bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
 				$("#hot").data("values", hotData);
 				
 				// You can access Handsontable api methods by passing their names as an argument, e.g.:
@@ -107,75 +108,39 @@
 					var data = $("#hot").data("values");
 					// Execute when spreadsheet data is available
 					if (data) {
-						// Clear path if it exists so we don't have memory problems (maybe this isn't necessary)
-						if (path) {path.remove();}
+						// Drawing parameters (may be fetched from user input later)
+						var pointRadius = 5;
 						
-						// Create a new Paper.js path object and starting point
-						var path = new Path();
-						var point = new Point(100,200);
-						
-						// Give line a random color
-						switch(Math.floor(Math.random() * 3)) {
-							case 0:
-								path.strokeColor = 'black';
-								break;
-							case 1:
-								path.strokeColor = 'red';
-								break;
-							case 2:
-								path.strokeColor = 'blue';
-								break;
-							default:
-								console.log("Color picking error");
-						}
-						
-						// Start line from initial value of point
-						path.moveTo(point);
-						// Import data from the spreadsheet
-						data = $("#hot").data("values");
-						//console.log(data);
-						// Check to see how long the valid list of data is
+						// Check to see how long the valid list of data is (needs a coordinate PAIR!)
 						var max = getMaxIndex(data);
-						//console.log("max index: "+max);
-						// Display the points at using values from the spreadsheet
-						for (var i=0; i < max; i++) {
-							if (data) {
-								point.x = data[i][0];
-								point.y = data[i][1];
-								
-								//console.log(point);
-								
-								path.add(point);
-							}
-						}
-						path.smooth();
-
-						// Calculate best fit line with least sqaures regression
-						var Xsum =0;
-						var Ysum = 0;
-						var XYsum= 0;
-						var XXsum= 0;
-						var b=0;
-						var a=0;
-						var length = 4; //hack,should be the length of the data array
-						//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
 						
-							for (i=0;i<length;i++){
-								Xsum += data[i][0];
-								Ysum += data[i][1];
-								XYsum += data[i][0]*data[i][1];
-								XXsum += data[i][0]*data[i][0];
-							}
-
-							b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
-							a=(Ysum-b*Xsum)/length;
-							var linearX = new Point(0,a);
-							var linearY = new Point(500,a+500*b);
-							var bestFit = new Path();
-							bestFit.moveTo(linearX);
-							bestFit.strokeColor = 'green';
-							$("#regression").textContent = 'new text';
-							bestFit.add(linearY);
+						// Declare array of points, one for each valid data entry, and initialize with values from the data array
+						var points = new Array();
+						for (var i=0; i < max; i++) {
+							points.push(new Point(data[i][0],data[i][1]));
+						}
+						
+						var circles = new Array();
+						
+						// Display the points from the array
+						for (var i=0; i < max; i++) {
+							//console.log("display "+ i);
+							circles.push(new Path.Circle(points[i], pointRadius));
+							circles[i].fillColor = 'black';
+						}
+						
+						// Array of two points at either end of the line
+						var bestFitCoords = getBestFit(data);
+						
+						if (bestFit) {bestFit.remove();} // Clear any best fit lines in existence
+						
+						var bestFit = new Path();
+						bestFit.moveTo(bestFitCoords[0]);
+						bestFit.strokeColor = 'green';
+						bestFit.add(bestFitCoords[1]);
+						
+						// Add label with regression info (doesn't work with jQuery?)
+						$("#regression").textContent = 'new text';
 					}
 				}
 			}
@@ -184,13 +149,78 @@
 			// Takes an array composed of n arrays with 2 elements each
 			function getMaxIndex(data){
 				
-				// Magic number 21 is the maximum number of rows in the table, set arbitrarily; passing the data by binding it to the element might be better
-				for (var j=0; j < 21; j++) {
+				// Magic number 10 is the maximum number of rows in the table, set arbitrarily; passing the data by binding it to the element might be better
+				for (var j=0; j < 10; j++) {
 					// Check if either cell is empty; if yes, return the last full row + 1 (the for loop that will use this needs the max index + 1)
+					// NOTE: this checking should be more rigorous, checking for bad input (not numbers)
 					if (data[j][0] === "" || data[j][1] === "" ) {
-						return j;
+						break;
 					}
 				}
+				
+				return j;
+			}
+			
+			// Calculate best fit line with least squares regression
+			// Takes an array of 2-element arrays, each one a coordinate pair
+			// Returns an array of 2 points
+			function getBestFit(data) {
+				var Xsum =0;
+				var Ysum = 0;
+				var XYsum = 0;
+				var XXsum = 0;
+				var b = 0;
+				var a = 0;
+				var length = getMaxIndex(data); //length of the data array (checks for valid coordinate pairs (sorta))
+				//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
+				
+				for (var i = 0; i < length; i++){
+					Xsum += data[i][0];
+					Ysum += data[i][1];
+					XYsum += data[i][0]*data[i][1];
+					XXsum += data[i][0]*data[i][0];
+				}
+
+				b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
+				a=(Ysum-b*Xsum)/length;
+				
+				// Create a 1D array/list of the x coordinates
+				var xCoords = Array();
+				for (var i = 0; i < length; i++){
+					xCoords.push(data[i][0]);
+				}
+				
+				// Find min and max X coordinates
+				var minX = findMinElement(xCoords);
+				var maxX = findMaxElement(xCoords);
+				
+				// Define two points at the extremes of the domain of the data that are on the best fit line
+				var linearX = new Point(minX,a+minX*b);
+				var linearY = new Point(maxX,a+maxX*b);
+				
+				return [linearX,linearY];
+			}
+			
+			//Takes a 1D array and returns the largest element (must be a number)
+			function findMaxElement(data) {
+				var maxElement = 0;
+				for (i in data) {
+					if (i > maxElement) {
+						maxElement = i;
+					}
+				}
+				return maxElement;
+			}
+			
+			// Returns the smallest element
+			function findMinElement(data) {
+				var minElement = 0;
+				for (i in data) {
+					if (i < minElement) {
+						minElement = i;
+					}
+				}
+				return minElement;
 			}
 		</script>
 
