@@ -90,13 +90,6 @@
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
 					var data = $("#hot").data("values");
 					
-					// Check to see how long the valid list of data is (needs a coordinate PAIR!)
-					var max = getMaxIndex(data);
-					
-					// Flip y values so the points display properly on the js canvas
-					for (var i = 0; i < max; i++) {
-						data[i][1] = 600 - data[i][1];
-					}
 					// Execute when spreadsheet data is available
 					if (data) {
 						
@@ -105,6 +98,11 @@
 						
 						// Check to see how long the valid list of data is (needs a coordinate PAIR!)
 						var max = getMaxIndex(data);
+
+						// Flip y values so the points display properly on the js canvas
+						for (var i = 0; i < max; i++) {
+							data[i][1] = 600 - data[i][1];
+						}
 						
 						// Declare array of points, one for each valid data entry, and initialize with values from the data array
 						var points = new Array();
