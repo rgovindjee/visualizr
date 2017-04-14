@@ -54,10 +54,11 @@
 					// Update data after change
 					afterChange: function (changes, source) {
 							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
-							//console.log(changes);
+							console.log(changes);
 							// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 							d[changes[0][0]][changes[0][1]] = changes[0][3];
 							$("#hot").data("values", d);
+							console.log("Data: " + d);
 							}
 					}
 				});
