@@ -189,7 +189,7 @@
 				for (var i = 0; i < length; i++){
 					xCoords.push(data[i][0]);
 				}
-				
+				console.log("xCoords: " + xCoords);
 				// Find min and max X coordinates
 				var minX = findMinElement(xCoords);
 				var maxX = findMaxElement(xCoords);
@@ -214,7 +214,7 @@
 			
 			// Returns the smallest element
 			function findMinElement(data) {
-				var minElement = 0;
+				var minElement = data[0];
 				for (i in data) {
 					if (i < minElement) {
 						minElement = i;
