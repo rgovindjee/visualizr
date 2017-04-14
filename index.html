@@ -204,9 +204,9 @@
 			// Takes a 1D array and returns the largest element (must be a number)
 			function findMaxElement(data) {
 				var maxElement = 0;
-				for (i in data) {
-					if (i > maxElement) {
-						maxElement = i;
+				for (var i = 0; i < data.length; i++) {
+					if (data[i] > maxElement) {
+						maxElement = data[i];
 					}
 				}
 				return maxElement;
@@ -215,9 +215,9 @@
 			// Returns the smallest element
 			function findMinElement(data) {
 				var minElement = data[0];
-				for (i in data) {
-					if (i < minElement) {
-						minElement = i;
+				for (var i = 1; i < data.length; i++) {
+					if (data[i] < minElement) {
+						minElement = data[i];
 					}
 				}
 				return minElement;
