@@ -71,23 +71,6 @@
 				// You can access Handsontable api methods by passing their names as an argument, e.g.:
 				var hotInstance = $("#hot").handsontable('getInstance');
 			  
-				/*
-				function bindDumpButton() {
-			  
-					Handsontable.Dom.addEvent(document.body, 'click', function (e) {
-			  
-						var element = e.target || e.srcElement;
-			  
-						if (element.nodeName == "BUTTON" && element.name == 'dump') {
-						  var name = element.getAttribute('data-dump');
-						  var instance = element.getAttribute('data-instance');
-						  var hot = window[instance];
-						  console.log('data of ' + name, hot.getData());
-						}
-					});
-				}
-				
-				bindDumpButton();*/
 			});
 		</script>
 		
@@ -108,6 +91,7 @@
 				view.onFrame = function(event) {
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
 					var data = $("#hot").data("values");
+					
 					// Execute when spreadsheet data is available
 					if (data) {
 						// Drawing parameters (may be fetched from user input later)
@@ -121,7 +105,7 @@
 						for (var i=0; i < max; i++) {
 							points.push(new Point(data[i][0],data[i][1]));
 						}
-						
+						console.log(points);
 						var circles = new Array();
 						
 						// Display the points from the array
