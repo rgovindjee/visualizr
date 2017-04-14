@@ -57,7 +57,7 @@
 								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 								d[changes[0][0]][changes[0][1]] = changes[0][3];
 								// Fix y values so point displays properly on canvas
-								if (changes[0][1] === 1) {
+								if (changes[0][1] == 1) {
 									d[changes[0][0]][changes[0][1]] = 600 - d[changes[0][0]][changes[0][1]];
 								}
 								// Save change to data array to object for global access
