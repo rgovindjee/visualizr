@@ -84,7 +84,7 @@
 				var canvas = document.getElementById('myCanvas');
 				// Create an empty project and a view for the canvas:
 				paper.setup(canvas);
-				
+				var bestFit = new Path();
 				// Draw 60 times every second
 				view.onFrame = function(event) {
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
@@ -116,13 +116,11 @@
 						// Array of two points at either end of the line
 						var bestFitCoords = getBestFit(data);
 						
-						//console.log("Before: " + bestFit);
-						var bestFit = new Path();
+						// Draw best fit line
 						bestFit.moveTo(bestFitCoords[0]);
 						bestFit.strokeColor = 'green';
 						bestFit.add(bestFitCoords[1]);
-						bestFit.remove();
-						//console.log("After: " + bestFit);
+
 						// Add label with regression info (doesn't work with jQuery?)
 						$("#regression").textContent = 'new text';
 					}
