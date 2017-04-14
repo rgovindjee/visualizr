@@ -5,17 +5,17 @@
 		<title>Project LPIE</title>
 		
 		<!-- Load stylesheets for general use and the spreadsheet library-->
-		<link rel="stylesheet" href="css/stylesheet.css">
-		<link rel="stylesheet" media="screen" href="js/handsontable/dist/handsontable.full.css">
+		<link rel="stylesheet" href="https://github.com/rgovindjee/visualizr/blob/9e702b42ca4bd0526fe4e4285ee0e613312d6b75/css/stylesheet.css">
+		<link rel="stylesheet" media="screen" href="https://github.com/rgovindjee/visualizr/blob/9e702b42ca4bd0526fe4e4285ee0e613312d6b75/js/handsontable/dist/handsontable.css">
 		
 		<!-- Load jQuery-->
-		<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="https://github.com/rgovindjee/visualizr/blob/9e702b42ca4bd0526fe4e4285ee0e613312d6b75/js/jquery-3.2.1.min.js"></script>
 	
 		<!-- Load the Paper.js library; Paper.js is a drawing library that adds functions to the Canvas HTML object -->
-		<script type="text/javascript" src="js/paperscript/dist/paper-full.js"></script>
+		<script type="text/javascript" src="https://github.com/rgovindjee/visualizr/blob/9e702b42ca4bd0526fe4e4285ee0e613312d6b75/js/paperscript/dist/paper-full.js"></script>
 		
 		<!-- Load the spreadsheet library-->
-		<script type="text/javascript" src="js/handsontable/dist/handsontable.full.js"></script>
+		<script type="text/javascript" src="https://github.com/rgovindjee/visualizr/blob/9e702b42ca4bd0526fe4e4285ee0e613312d6b75/js/handsontable/dist/handsontable.full.js"></script>
 		
 		<!--Create the spreadsheet-->
 		<script type="text/javascript">
@@ -135,30 +135,33 @@
 					}
 					path.smooth();
 
-var Xsum =0;
-var Ysum = 0;
-var XYsum= 0;
-var XXsum= 0;
-var b=0;
-var a=0;
-var length = 4; //hack,should be the length of the data array
-//the for loop loops over the elrments of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
-if(data) { for(i=0;i<length;i++){
-	Xsum += data[i][0];
-	Ysum += data[i][1];
-	XYsum += data[i][0]*data[i][1];
-	XXsum += data[i][0]*data[i][0];
-}
+					// Calculate best fit line with least sqaures regression
+					var Xsum =0;
+					var Ysum = 0;
+					var XYsum= 0;
+					var XXsum= 0;
+					var b=0;
+					var a=0;
+					var length = 4; //hack,should be the length of the data array
+					//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
+					if(data) { 
+						for (i=0;i<length;i++){
+							Xsum += data[i][0];
+							Ysum += data[i][1];
+							XYsum += data[i][0]*data[i][1];
+							XXsum += data[i][0]*data[i][0];
+						}
 
-b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
-a=(Ysum-b*Xsum)/length;
-var linearX = new Point(0,a);
-var linearY = new Point(500,a+500*b);
-var bestFit = new Path();
-bestFit.moveTo(linearX);
-bestFit.strokeColor = 'green';
-$("#regression").textContent = 'new text';
-bestFit.add(linearY);}
+						b=(length*XYsum-Xsum*Ysum)/(length*XXsum-Xsum*Xsum);
+						a=(Ysum-b*Xsum)/length;
+						var linearX = new Point(0,a);
+						var linearY = new Point(500,a+500*b);
+						var bestFit = new Path();
+						bestFit.moveTo(linearX);
+						bestFit.strokeColor = 'green';
+						$("#regression").textContent = 'new text';
+						bestFit.add(linearY);
+					}
 				}
 			}
 			
