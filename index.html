@@ -21,7 +21,7 @@
 		<script type="text/javascript">
 			$(document).ready(function () {
 
-				var d = [
+				var dLive = [
 					  [100, 200],
 					  [200, 250],
 					  [250, 300],
@@ -34,13 +34,16 @@
 					  ['', ''],
 					];
 				
+				var dDisplay = dLive;
+				var max = getMaxIndex(dLive);
+				
 			  
 				// Instead of creating a new Handsontable instance with the container element passed as an argument,
 				// you can simply call .handsontable method on a jQuery DOM object.
 				var $container = $("#hot");
 
 				$container.handsontable({
-					data: d,
+					data: dLive,
 					startRows: 10,
 					startCols: 2,
 					minRows: 1,
@@ -55,17 +58,14 @@
 					afterChange: function (changes, source) {
 							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
 								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
-								d[changes[0][0]][changes[0][1]] = changes[0][3];
+								dLive[changes[0][0]][changes[0][1]] = changes[0][3];
+								dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
 								// Fix y values so point displays properly on canvas
-								console.log(changes);
 								if (changes[0][1] === 1) {
-									console.log("if statement triggered");
-									console.log(d[changes[0][0]][changes[0][1]]);
-									d[changes[0][0]][changes[0][1]] = 600 - d[changes[0][0]][changes[0][1]];
-									console.log(d[changes[0][0]][changes[0][1]]);
+									dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
 								}
 								// Save change to data array to object for global access
-								$("#hot").data("values", $("#hot").handsontable('getData'));
+								$("#hot").data("values", dDisplay);
 							}
 					}
 				});
