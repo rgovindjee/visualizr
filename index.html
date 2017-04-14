@@ -116,6 +116,7 @@
 						// Array of two points at either end of the line
 						var bestFitCoords = getBestFit(data);
 						
+						bestFit.removeSegments();
 						// Draw best fit line
 						bestFit.moveTo(bestFitCoords[0]);
 						bestFit.strokeColor = 'green';
