@@ -190,11 +190,11 @@
 				for (var i = 0; i < length; i++){
 					xCoords.push(data[i][0]);
 				}
-				console.log("xCoords: " + xCoords);
+				//console.log("xCoords: " + xCoords);
 				// Find min and max X coordinates
 				var minX = findMinElement(xCoords);
 				var maxX = findMaxElement(xCoords);
-				console.log(minX + " , " + maxX);
+				//console.log(minX + " , " + maxX);
 				// Define two points at the extremes of the domain of the data that are on the best fit line
 				var linearMin = new Point(minX,a+minX*b);
 				var linearMax = new Point(maxX,a+maxX*b);
