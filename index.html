@@ -89,12 +89,17 @@
 				view.onFrame = function(event) {
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
 					var data = $("#hot").data("values");
+					
+					// Check to see how long the valid list of data is (needs a coordinate PAIR!)
+					var max = getMaxIndex(data);
+					
 					// Flip y values so the points display properly on the js canvas
-					for (var i = 0; i < data.length; i++) {
+					for (var i = 0; i < max; i++) {
 						data[i][1] = 600 - data[i][1];
 					}
 					// Execute when spreadsheet data is available
 					if (data) {
+						
 						// Drawing parameters (may be fetched from user input later)
 						var pointRadius = 5;
 						
