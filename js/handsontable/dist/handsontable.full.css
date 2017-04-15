@@ -71,7 +71,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 }
 
 .handsontable table.htCore {
-padding-left: 30px;
+  padding-left: 30px;
   border-collapse: separate;
   /*it must be separate, otherwise there are offset miscalculations in WebKit: http://stackoverflow.com/questions/2655987/border-collapse-differences-in-ff-and-webkit*/
   /*this actually only changes appearance of user selection - does not make text unselectable
