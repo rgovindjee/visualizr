@@ -71,6 +71,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 }
 
 .handsontable table.htCore {
+padding-left: 30px;
   border-collapse: separate;
   /*it must be separate, otherwise there are offset miscalculations in WebKit: http://stackoverflow.com/questions/2655987/border-collapse-differences-in-ff-and-webkit*/
   /*this actually only changes appearance of user selection - does not make text unselectable
@@ -108,7 +109,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   height: 22px;
   empty-cells: show;
   line-height: 21px;
-  padding: 0 4px 0 4px;
+  padding: 0px 4px 0 4px;
   /* top, bottom padding different than 0 is handled poorly by FF with HTML5 doctype */
   background-color: #FFF;
   vertical-align: top;

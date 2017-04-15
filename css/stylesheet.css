@@ -11,6 +11,9 @@ canvas[resize] {
     height: 100%;
 }
 
+#hot {
+
+}
 canvas {
 	padding: 0;
     margin: auto;
