@@ -34,10 +34,14 @@
 					  ['', ''],
 					];
 				
-				var dDisplay = dLive;
-				var max = getMaxIndex(dLive);
-				for (var i = 0; i < max; i++) {
-					dDisplay[i][1] = 600 - dDisplay[i][1];	
+				var dDisplay = new Array();
+				for (var i = 0; i < dLive.length; i++) {
+					if (dLive[i][0] !== "" && dLive[i][1] !== "") {
+						dDisplay.push([dLive[i][0],600 - dLive[i][1]]);	
+					}
+					else {
+						dDisplay.push(["",""]);
+					}
 				}
 			  
 				// Instead of creating a new Handsontable instance with the container element passed as an argument,
@@ -60,6 +64,7 @@
 					afterChange: function (changes, source) {
 							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
 								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
+								console.log(dDisplay);
 								dLive[changes[0][0]][changes[0][1]] = changes[0][3];
 								dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
 								// Fix y values so point displays properly on canvas
