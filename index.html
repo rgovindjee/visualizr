@@ -45,9 +45,12 @@
 				}
 			  
 				// Instead of creating a new Handsontable instance with the container element passed as an argument,
-				// you can simply call .handsontable method on a jQuery DOM object.
+				// simply call .handsontable method on a jQuery DOM object.
 				var $container = $("#hot");
-
+				
+				// Bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
+				$container.data("values", dDisplay);
+				// Initialize the Handonstable instance
 				$container.handsontable({
 					data: dLive,
 					startRows: 10,
@@ -60,31 +63,25 @@
 					colHeaders: true,
 					minSpareRows: 1,
 					contextMenu: true,
+					
 					// Update data after change
+					// Changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 					afterChange: function (changes, source) {
-							if (changes) { // If statement shouldn't be necessary, seems to be passing ghost events on initialization though
-								// changes array is an array with one element, the event as array [row, col, oldVal, newVal]
-								console.log(dDisplay);
+								
+								// Update both the data in the spreadsheet and the data passed to the canvas
 								dLive[changes[0][0]][changes[0][1]] = changes[0][3];
 								dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
-								// Fix y values so point displays properly on canvas
+								
+								// Fix y values so point displays properly on canvas, if a y value was changed
 								if (changes[0][1] === 1) {
 									dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
 								}
+								
 								// Save change to data array to object for global access
-								$("#hot").data("values", dDisplay);
-							}
+								$container.data("values", dDisplay);
 					}
 				});
 
-				var hotData = $("#hot").handsontable('getData');
-				
-				// Bind data to the element with jQuery so other scripts can access it (maybe better than a global variable)
-				$("#hot").data("values", hotData);
-				
-				// You can access Handsontable api methods by passing their names as an argument, e.g.:
-				var hotInstance = $("#hot").handsontable('getInstance');
-			  
 			});
 		</script>
 		
@@ -112,10 +109,10 @@
 						// Drawing parameters (may be fetched from user input later)
 						var pointRadius = 5;
 						
-						// Check to see how long the valid list of data is (needs a coordinate PAIR!)
+						// Check to see how long the valid list of data is (needs coordinate PAIRS!)
 						var max = getMaxIndex(data);
 						
-						// Declare array of points, one for each valid data entry, and initialize with values from the data array
+						// Declare array of Point objects and initialize with values from the data array
 						var points = new Array();
 						for (var i=0; i < max; i++) {
 							points.push(new Point(data[i]));
@@ -123,14 +120,14 @@
 						
 						var circles = new Array();
 						
-						// Display the points from the array
+						// Display the points from the array as small circles
 						for (var i=0; i < max; i++) {
 							//console.log("display "+ i);
 							circles.push(new Path.Circle(points[i], pointRadius));
 							circles[i].fillColor = 'black';
 						}
 						
-						// Array of two points at either end of the line
+						// Returns array with two points, each at one end of the line within the domain of the data
 						var bestFitCoords = getBestFit(data);
 						
 						bestFit.removeSegments();
@@ -139,7 +136,7 @@
 						bestFit.strokeColor = 'green';
 						bestFit.add(bestFitCoords[1]);
 
-						// Add label with regression info (doesn't work with jQuery?)
+						// Add regression info on canvas (todo)
 						$("#regression").textContent = 'new text';
 					}
 				}
@@ -232,12 +229,9 @@
 		<div id="titles">
 			<h1>Data Visualizr</h1>
 			<h2>For all your graphing and data visualization needs! More features coming soon.</h2>
-			<h2>The Green Line is the linear regression line</h2>
+			<h2>The green line represents the linear regression</h2>
 		</div>
 		<div id="hot"></div>
 		<canvas id="myCanvas"></canvas>
-		<div id="foot">
-			<h2 id="regression">the linear regrssion line is y = </h2>
-		</div>
 	</body>
 </html>
