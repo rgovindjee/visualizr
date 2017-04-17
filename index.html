@@ -181,10 +181,10 @@
 				//the for loop loops over the elements of the two arrays where list1 is the array of x values and list2 is the array of y values. it is assumed that the arrays equal in length.
 				
 				for (var i = 0; i < length; i++){
-					Xsum += data[i][0];
-					Ysum += data[i][1];
-					XYsum += data[i][0]*data[i][1];
-					XXsum += data[i][0]*data[i][0];
+					Xsum += Number(data[i][0]);
+					Ysum += Number(data[i][1]);
+					XYsum += Number(data[i][0])*Number(data[i][1]);
+					XXsum += Number(data[i][0])*Number(data[i][0]);
 				}
 
 				b=(XYsum*length-Xsum*Ysum)/(XXsum*length - Xsum*Xsum);
