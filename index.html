@@ -98,6 +98,9 @@
 				// Create an empty project and a view for the canvas:
 				paper.setup(canvas);
 				var bestFit = new Path();
+				// Add regression info on canvas
+				var text = new PointText();
+				
 				// Draw 60 times every second
 				view.onFrame = function(event) {
 					// Pull spreadsheet data from the element that the spreadsheet is associated with
@@ -108,6 +111,7 @@
 						
 						// Drawing parameters (may be fetched from user input later)
 						var pointRadius = 5;
+						var textLocation = new Point(650,25);
 						
 						// Check to see how long the valid list of data is (needs coordinate PAIRS!)
 						var max = getMaxIndex(data);
@@ -124,20 +128,25 @@
 						for (var i=0; i < max; i++) {
 							//console.log("display "+ i);
 							circles.push(new Path.Circle(points[i], pointRadius));
-							circles[i].fillColor = 'black';
+							circles[i].fillColor = "black";
 						}
 						
 						// Returns array with two points, each at one end of the line within the domain of the data
-						var bestFitCoords = getBestFit(data);
+						var bestFitInfo = getBestFit(data);
 						
 						bestFit.removeSegments();
 						// Draw best fit line
-						bestFit.moveTo(bestFitCoords[0]);
-						bestFit.strokeColor = 'green';
-						bestFit.add(bestFitCoords[1]);
+						bestFit.moveTo(bestFitInfo[0]);
+						bestFit.strokeColor = "green";
+						bestFit.add(bestFitInfo[1]);
 
 						// Add regression info on canvas (todo)
-						$("#regression").textContent = 'new text';
+						text.position = textLocation;
+						// Clear text if already displaying some
+						text.content = " ";
+						text.justification = "left";
+						text.fillColor = "black";
+						text.content = "Regression info\na: " + bestFitInfo[2] + "   b: " + bestFitInfo[3];
 					}
 				}
 			}
@@ -160,7 +169,7 @@
 			
 			// Calculate best fit line with least squares regression
 			// Takes an array of 2-element arrays, each one a coordinate pair
-			// Returns an array of 2 points
+			// Returns an array of 2 points, a, and b
 			function getBestFit(data) {
 				var Xsum =0;
 				var Ysum = 0;
@@ -180,8 +189,6 @@
 
 				b=(XYsum*length-Xsum*Ysum)/(XXsum*length - Xsum*Xsum);
 				a=(Ysum-b*Xsum)/length;
-				console.log(b);
-				console.log(a);
 				
 				// Create a 1D array/list of the x coordinates
 				var xCoords = Array();
@@ -197,7 +204,7 @@
 				var linearMin = new Point(minX,a+minX*b);
 				var linearMax = new Point(maxX,a+maxX*b);
 				
-				return [linearMin,linearMax];
+				return [linearMin,linearMax,a,b];
 			}
 			
 			// Takes a 1D array and returns the largest element (must be a number)
