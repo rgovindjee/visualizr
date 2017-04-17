@@ -67,19 +67,18 @@
 					// Update data after change
 					// Changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 					afterChange: function (changes, source) {
-								if (changes) {
-									// Update both the data in the spreadsheet and the data passed to the canvas
-									dLive[changes[0][0]][changes[0][1]] = changes[0][3];
-									dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
-
-									// Fix y values so point displays properly on canvas, if a y value was changed
-									if (changes[0][1] === 1) {
-										dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
-									}
-
-									// Save change to data array to object for global access
-									$container.data("values", dDisplay);
+								
+								// Update both the data in the spreadsheet and the data passed to the canvas
+								dLive[changes[0][0]][changes[0][1]] = changes[0][3];
+								dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
+								
+								// Fix y values so point displays properly on canvas, if a y value was changed
+								if (changes[0][1] === 1) {
+									dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
 								}
+								
+								// Save change to data array to object for global access
+								$container.data("values", dDisplay);
 					}
 				});
 
@@ -147,7 +146,8 @@
 						text.content = " ";
 						text.justification = "left";
 						text.fillColor = "black";
-						text.content = "Regression info\na: " + bestFitInfo[2] + "   b: " + bestFitInfo[3];
+						text.content = "Regression info\na: " + bestFitInfo[2] + "   b: " + bestFitInfo[3] 
+							+ "\n: " + bestFitInfo[4];
 					}
 				}
 			}
@@ -170,12 +170,14 @@
 			
 			// Calculate best fit line with least squares regression
 			// Takes an array of 2-element arrays, each one a coordinate pair
-			// Returns an array of 2 points, a, and b
+			// Returns an array of 2 points, a, and b and r
 			function getBestFit(data) {
 				var Xsum =0;
 				var Ysum = 0;
 				var XYsum = 0;
 				var XXsum = 0;
+				var YYsum = 0;
+				var r = 0;
 				var b = 0;
 				var a = 0;
 				var length = getMaxIndex(data); //length of the data array (checks for valid coordinate pairs (sorta))
@@ -186,10 +188,12 @@
 					Ysum += Number(data[i][1]);
 					XYsum += Number(data[i][0])*Number(data[i][1]);
 					XXsum += Number(data[i][0])*Number(data[i][0]);
+					YYsum += Number(data[i][1])*Number(data[i][1]);
 				}
 
 				b=(XYsum*length-Xsum*Ysum)/(XXsum*length - Xsum*Xsum);
 				a=(Ysum-b*Xsum)/length;
+				r=(XYsum*length-Xsum*Ysum)/((math.sqrt(length*XXsum-Xsum*Xsum)-math.sqrt(length*YYsum-Ysum*Ysum));
 				
 				// Create a 1D array/list of the x coordinates
 				var xCoords = Array();
@@ -205,7 +209,7 @@
 				var linearMin = new Point(minX,a+minX*b);
 				var linearMax = new Point(maxX,a+maxX*b);
 				
-				return [linearMin,linearMax,a,b];
+				return [linearMin,linearMax,a,b,r];
 			}
 			
 			// Takes a 1D array and returns the largest element (must be a number)
