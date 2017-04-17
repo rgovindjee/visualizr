@@ -67,18 +67,19 @@
 					// Update data after change
 					// Changes array is an array with one element, the event as array [row, col, oldVal, newVal]
 					afterChange: function (changes, source) {
-								
-								// Update both the data in the spreadsheet and the data passed to the canvas
-								dLive[changes[0][0]][changes[0][1]] = changes[0][3];
-								dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
-								
-								// Fix y values so point displays properly on canvas, if a y value was changed
-								if (changes[0][1] === 1) {
-									dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
+								if (changes) {
+									// Update both the data in the spreadsheet and the data passed to the canvas
+									dLive[changes[0][0]][changes[0][1]] = changes[0][3];
+									dDisplay[changes[0][0]][changes[0][1]] = changes[0][3];
+
+									// Fix y values so point displays properly on canvas, if a y value was changed
+									if (changes[0][1] === 1) {
+										dDisplay[changes[0][0]][changes[0][1]] = 600 - dDisplay[changes[0][0]][changes[0][1]];
+									}
+
+									// Save change to data array to object for global access
+									$container.data("values", dDisplay);
 								}
-								
-								// Save change to data array to object for global access
-								$container.data("values", dDisplay);
 					}
 				});
 
