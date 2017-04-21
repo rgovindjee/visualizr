@@ -147,7 +147,7 @@
 						text.justification = "left";
 						text.fillColor = "black";
 						text.content = "Regression info\na: " + bestFitInfo[2] + "   b: " + bestFitInfo[3] 
-							+ "\n: " + bestFitInfo[4];
+							+ "\nr: " + bestFitInfo[4];
 					}
 				}
 			}
@@ -193,7 +193,7 @@
 
 				b=(XYsum*length-Xsum*Ysum)/(XXsum*length - Xsum*Xsum);
 				a=(Ysum-b*Xsum)/length;
-				r=(XYsum*length-Xsum*Ysum)/(Math.sqrt(length*XXsum-Xsum*Xsum)-Math.sqrt(length*YYsum-Ysum*Ysum));
+				r=(XYsum*length-Xsum*Ysum)/(Math.sqrt(length*XXsum-Xsum*Xsum+Math.sqrt(length*YYsum-Ysum*Ysum));
 				
 				// Create a 1D array/list of the x coordinates
 				var xCoords = Array();
